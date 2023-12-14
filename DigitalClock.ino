@@ -836,6 +836,8 @@ void SetLabelAlarm3() {
 }
 
 // Play Alarm
+#define ALARM_AUTO_TURN_OFF 300000
+unsigned long alarmOnPrevMil = 0;
 void PlayAlarm() {
   if (display.displayAnimate()) {
     display.displayClear();
@@ -844,7 +846,7 @@ void PlayAlarm() {
 
   PlayBuzzer(ALARM);
 
-  if (GetButtonPressed(MODE_BTN_PIN) || GetButtonPressed(UP_BTN_PIN) || GetButtonPressed(DOWN_BTN_PIN)) {
+  if (GetButtonPressed(MODE_BTN_PIN) || GetButtonPressed(UP_BTN_PIN) || GetButtonPressed(DOWN_BTN_PIN) || (millis() > alarmOnPrevMil + ALARM_AUTO_TURN_OFF)) {
     display.displayClear();
     display.displayText("", PA_CENTER, 0, 0, PA_NO_EFFECT, PA_NO_EFFECT);
     display.setFont(tinyFont);
@@ -946,6 +948,7 @@ void ChangeClockMode(ClockMode newMode) {
       break;
     
     case ALARM_ON:
+      alarmOnPrevMil = millis();
       display.displayClear();
       display.setFont(nullptr);
       display.displayText("", PA_CENTER, 0, 0, PA_NO_EFFECT, PA_NO_EFFECT);
